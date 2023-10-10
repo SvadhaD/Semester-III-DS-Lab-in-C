@@ -1,0 +1,74 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+void removeDuplicates(Node* head) {
+    Node* current = head;
+
+    while (current != NULL && current->next != NULL) {
+        if (current->data == current->next->data) {
+            Node* duplicate = current->next;
+            current->next = duplicate->next;
+            free(duplicate);
+        } else {
+            current = current->next;
+        }
+    }
+}
+
+void printList(Node* head) {
+    Node* current = head;
+    while (current != NULL) {
+        printf("%d ", current->data);
+        current = current->next;
+    }
+    printf("\n");
+}
+
+int main() {
+    Node* head = NULL;
+    Node* tail = NULL;
+
+    int n;
+    printf("Enter the number of elements in the sorted list: ");
+    scanf("%d", &n);
+
+    for (int i = 0; i < n; i++) {
+        int data;
+        printf("Enter element %d: ", i + 1);
+        scanf("%d", &data);
+
+        Node* newNode = (Node*)malloc(sizeof(Node));
+        newNode->data = data;
+        newNode->next = NULL;
+
+        if (head == NULL) {
+            head = newNode;
+            tail = newNode;
+        } else {
+            tail->next = newNode;
+            tail = newNode;
+        }
+    }
+
+    printf("Original List: ");
+    printList(head);
+
+    removeDuplicates(head);
+
+    printf("List after removing duplicates: ");
+    printList(head);
+
+    // Clean up memory (free allocated nodes)
+    while (head != NULL) {
+        Node* temp = head;
+        head = head->next;
+        free(temp);
+    }
+
+    return 0;
+}
