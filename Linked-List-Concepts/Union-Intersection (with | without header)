@@ -1,0 +1,172 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+struct Node {
+  int data;
+  struct Node* next;
+};
+
+struct Node* createNode(int data) {
+  struct Node* newNode = malloc(sizeof(struct Node));
+  newNode->data = data;
+  newNode->next = NULL;
+  return newNode;
+}
+
+struct Node* insertAtHead(struct Node* head, int data) {
+  struct Node* newNode = createNode(data);
+  newNode->next = head;
+  head = newNode;
+  return head;
+}
+
+void printList(struct Node* head) {
+  while (head) {
+    printf("%d ", head->data);
+    head = head->next;
+  }
+  printf("\n");
+}
+
+bool isPresent(struct Node* head, int data) {
+  while (head) {
+    if (head->data == data) {
+      return true;
+    }
+    head = head->next;
+  }
+  return false;
+}
+
+struct Node* unionWithHeader(struct Node* head1, struct Node* head2) {
+  struct Node* newHead = createNode(0);
+  struct Node* current = newHead;
+
+  while (head1) {
+    if (!isPresent(newHead->next, head1->data)) {
+      current->next = createNode(head1->data);
+      current = current->next;
+    }
+    head1 = head1->next;
+  }
+
+  while (head2) {
+    if (!isPresent(newHead->next, head2->data)) {
+      current->next = createNode(head2->data);
+      current = current->next;
+    }
+    head2 = head2->next;
+  }
+
+  return newHead->next;
+}
+
+struct Node* intersectionWithHeader(struct Node* head1, struct Node* head2) {
+  struct Node* newHead = createNode(0);
+  struct Node* current = newHead;
+
+  while (head1) {
+    if (isPresent(head2, head1->data) && !isPresent(newHead->next, head1->data)) {
+      current->next = createNode(head1->data);
+      current = current->next;
+    }
+    head1 = head1->next;
+  }
+
+  return newHead->next;
+}
+
+struct Node* unionWithoutHeader(struct Node* head1, struct Node* head2) {
+  struct Node* newHead = NULL;
+  struct Node* current = NULL;
+
+  while (head1) {
+    if (!isPresent(newHead, head1->data)) {
+      if (!current) {
+        newHead = createNode(head1->data);
+        current = newHead;
+      } else {
+        current->next = createNode(head1->data);
+        current = current->next;
+      }
+    }
+    head1 = head1->next;
+  }
+
+  while (head2) {
+    if (!isPresent(newHead, head2->data)) {
+      if (!current) {
+        newHead = createNode(head2->data);
+        current = newHead;
+      } else {
+        current->next = createNode(head2->data);
+        current = current->next;
+      }
+    }
+    head2 = head2->next;
+  }
+
+  return newHead;
+}
+
+struct Node* intersectionWithoutHeader(struct Node* head1, struct Node* head2) {
+  struct Node* newHead = NULL;
+  struct Node* current = NULL;
+
+  while (head1) {
+    if (isPresent(head2, head1->data) && !isPresent(newHead, head1->data)) {
+      if (!current) {
+        newHead = createNode(head1->data);
+        current = newHead;
+      } else {
+        current->next = createNode(head1->data);
+        current = current->next;
+      }
+    }
+    head1 = head1->next;
+  }
+
+  return newHead;
+}
+
+int main() {
+  int n1, n2;
+  printf("Enter the number of elements in the first list: ");
+  scanf("%d", &n1);
+
+  struct Node* head1 = NULL;
+  for (int i = 0; i < n1; i++) {
+    int data;
+    printf("Enter element %d: ", i + 1);
+    scanf("%d", &data);
+    head1 = insertAtHead(head1, data);
+  }
+
+  printf("Enter the number of elements in the second list: ");
+  scanf("%d", &n2);
+
+  struct Node* head2 = NULL;
+  for (int i = 0; i < n2; i++) {
+    int data;
+    printf("Enter element %d: ", i + 1);
+    scanf("%d", &data);
+    head2 = insertAtHead(head2, data);
+  }
+
+  struct Node* unionWithHeaderResult = unionWithHeader(head1, head2);
+  struct Node* intersectionWithHeaderResult = intersectionWithHeader(head1, head2);
+  struct Node* unionWithoutHeaderResult = unionWithoutHeader(head1, head2);
+  struct Node* intersectionWithoutHeaderResult = intersectionWithoutHeader(head1, head2);
+
+  printf("Union with header: ");
+  printList(unionWithHeaderResult);
+  printf("Intersection with header: ");
+  printList(intersectionWithHeaderResult);
+  printf("Union without header: ");
+  printList(unionWithoutHeaderResult);
+  printf("Intersection without header: ");
+  printList(intersectionWithoutHeaderResult);
+
+  return 0;
+}
